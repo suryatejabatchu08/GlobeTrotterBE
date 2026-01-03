@@ -14,10 +14,10 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
     supabase: Client = Depends(get_supabase)
 ) -> dict:
-    \"\"\"
+    """
     Validate JWT token and return current user.
     Supabase handles JWT validation automatically.
-    \"\"\"
+    """
     try:
         token = credentials.credentials
         
@@ -46,10 +46,10 @@ async def get_current_user_optional(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(HTTPBearer(auto_error=False)),
     supabase: Client = Depends(get_supabase)
 ) -> Optional[dict]:
-    \"\"\"
+    """
     Optional authentication - returns user if authenticated, None otherwise.
     Used for endpoints that can be accessed both publicly and privately.
-    \"\"\"
+    """
     if not credentials:
         return None
     

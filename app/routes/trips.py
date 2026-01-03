@@ -19,9 +19,9 @@ async def create_trip(
     current_user: dict = Depends(get_current_user),
     supabase: Client = Depends(get_supabase)
 ):
-    \"\"\"
+    """
     Create a new trip for the authenticated user.
-    \"\"\"
+    """
     try:
         trip_dict = trip_data.model_dump()
         trip_dict["user_id"] = current_user.id
@@ -53,9 +53,9 @@ async def get_my_trips(
     skip: int = 0,
     limit: int = 100
 ):
-    \"\"\"
+    """
     Get all trips for the authenticated user.
-    \"\"\"
+    """
     try:
         # Get trips with pagination
         result = supabase.table("trips")\
@@ -90,9 +90,9 @@ async def get_trip(
     current_user: dict = Depends(get_current_user),
     supabase: Client = Depends(get_supabase)
 ):
-    \"\"\"
+    """
     Get a specific trip by ID. User must own the trip.
-    \"\"\"
+    """
     try:
         result = supabase.table("trips")\
             .select("*")\
@@ -126,9 +126,9 @@ async def update_trip(
     current_user: dict = Depends(get_current_user),
     supabase: Client = Depends(get_supabase)
 ):
-    \"\"\"
+    """
     Update a trip. User must own the trip.
-    \"\"\"
+    """
     try:
         # Verify ownership
         existing = supabase.table("trips")\
@@ -171,9 +171,9 @@ async def delete_trip(
     current_user: dict = Depends(get_current_user),
     supabase: Client = Depends(get_supabase)
 ):
-    \"\"\"
+    """
     Delete a trip. User must own the trip.
-    \"\"\"
+    """
     try:
         # Verify ownership and delete
         result = supabase.table("trips")\
@@ -206,9 +206,9 @@ async def share_trip(
     current_user: dict = Depends(get_current_user),
     supabase: Client = Depends(get_supabase)
 ):
-    \"\"\"
+    """
     Generate a public share link for a trip.
-    \"\"\"
+    """
     try:
         # Verify ownership
         trip = supabase.table("trips")\
@@ -258,9 +258,9 @@ async def get_shared_trip(
     supabase: Client = Depends(get_supabase),
     current_user: Optional[dict] = Depends(get_current_user_optional)
 ):
-    \"\"\"
+    """
     Get a trip by its public share token. No authentication required.
-    \"\"\"
+    """
     try:
         result = supabase.table("trips")\
             .select("*")\
@@ -293,9 +293,9 @@ async def unshare_trip(
     current_user: dict = Depends(get_current_user),
     supabase: Client = Depends(get_supabase)
 ):
-    \"\"\"
+    """
     Remove public sharing from a trip.
-    \"\"\"
+    """
     try:
         result = supabase.table("trips").update({
             "is_public": False,

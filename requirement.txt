@@ -8,4 +8,4 @@ python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
 httpx
-
+pydantic[email]
