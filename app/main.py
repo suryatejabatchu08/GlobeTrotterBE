@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer
 from app.core.config import settings
 from app.routes import auth, trips, profile, budget, search, itinerary
 import logging
@@ -12,13 +13,16 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-# Create FastAPI app
+# Create FastAPI app with security scheme
 app = FastAPI(
     title=settings.APP_NAME,
     debug=settings.DEBUG,
     version="1.0.0",
     description="GlobeTrotter API - Plan and share your trips"
 )
+
+# Add security scheme for Swagger UI
+security = HTTPBearer()
 
 # Configure CORS
 app.add_middleware(

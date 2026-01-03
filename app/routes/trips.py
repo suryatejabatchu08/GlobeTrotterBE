@@ -24,6 +24,13 @@ async def create_trip(
     """
     try:
         trip_dict = trip_data.model_dump()
+        
+        # Convert date objects to ISO format strings
+        if "start_date" in trip_dict and trip_dict["start_date"]:
+            trip_dict["start_date"] = trip_dict["start_date"].isoformat()
+        if "end_date" in trip_dict and trip_dict["end_date"]:
+            trip_dict["end_date"] = trip_dict["end_date"].isoformat()
+            
         trip_dict["user_id"] = current_user.id
         trip_dict["created_at"] = datetime.utcnow().isoformat()
         trip_dict["updated_at"] = datetime.utcnow().isoformat()
@@ -146,6 +153,13 @@ async def update_trip(
         
         # Update trip
         update_dict = trip_data.model_dump(exclude_unset=True)
+        
+        # Convert date objects to ISO format strings
+        if "start_date" in update_dict and update_dict["start_date"]:
+            update_dict["start_date"] = update_dict["start_date"].isoformat()
+        if "end_date" in update_dict and update_dict["end_date"]:
+            update_dict["end_date"] = update_dict["end_date"].isoformat()
+            
         update_dict["updated_at"] = datetime.utcnow().isoformat()
         
         result = supabase.table("trips")\
