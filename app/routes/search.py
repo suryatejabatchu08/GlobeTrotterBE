@@ -48,17 +48,15 @@ def search_cities(q: str, region: str | None = None):
 
     return results
 
-
 @router.get("/activities")
 def search_activities(
     city: str,
     category: str | None = None,
     max_cost: int | None = None
 ):
-    """Search for activities in a city using Foursquare API"""
     headers = {
-        "Authorization": f"Bearer {settings.FSQ_SERVICE_KEY}",
-        "X-Places-Api-Version": settings.FSQ_API_VERSION
+        "Authorization": f"Bearer YYJC2TYHXJTVSF5SPC3HOUGJMTLRHHDSEPHIGDTLVCFJREZZ",
+        "X-Places-Api-Version": "2025-06-17"
     }
 
     params = {
@@ -68,7 +66,7 @@ def search_activities(
     }
 
     res = requests.get(
-        f"{settings.FSQ_BASE_URL}/places/search",
+        f"https://places-api.foursquare.com/places/search",
         headers=headers,
         params=params
     ).json()
@@ -89,15 +87,14 @@ def search_activities(
             "name": place["name"],
             "category": cat,
             "estimated_cost": est_cost,
-            "latitude": place["geocodes"]["main"]["latitude"],
-            "longitude": place["geocodes"]["main"]["longitude"]
+            "latitude": place["latitude"],
+            "longitude": place["longitude"]
         })
 
     return activities
 
 
 def estimate_cost(category: str) -> int:
-    """Estimate activity cost based on category"""
     if "Museum" in category:
         return 300
     if "Outdoor" in category:

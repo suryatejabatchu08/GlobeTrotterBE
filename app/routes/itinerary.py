@@ -184,3 +184,159 @@ async def get_stop_activities(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+from datetime import datetime
+
+def calculate_days(start_date, end_date):
+    start = datetime.fromisoformat(start_date)
+    end = datetime.fromisoformat(end_date)
+    return (end - start).days + 1
+
+
+import requests
+
+def fetch_attractions(city: str, limit: int = 20):
+    headers = {
+        'Authorization': 'Bearer YYJC2TYHXJTVSF5SPC3HOUGJMTLRHHDSEPHIGDTLVCFJREZZ',
+        'X-Places-Api-Version': '2025-06-17',
+        'Accept': 'application/json'
+    }
+
+    params = {
+        "near": city,
+        "categories": "16000",  # attractions
+        "limit": limit
+    }
+
+    response = requests.get(
+        f"https://places-api.foursquare.com/places/search",
+        headers=headers,
+        params=params,
+        timeout=10
+    )
+
+    return response.json().get("results", [])
+
+
+
+from datetime import timedelta
+
+def generate_day_wise_itinerary(city, start_date, end_date):
+    days = calculate_days(start_date, end_date)
+    attractions = fetch_attractions(city, limit=days * 5)
+
+    itinerary = []
+    start = datetime.fromisoformat(start_date)
+
+    per_day = max(len(attractions) // days, 1)
+
+    for day in range(days):
+        day_date = start + timedelta(days=day)
+
+        day_activities = attractions[
+            day * per_day : (day + 1) * per_day
+        ]
+
+        itinerary.append({
+            "day": day + 1,
+            "date": day_date.date().isoformat(),
+            "city": city,
+            "activities": [
+                {
+                    "fsq_place_id": a["fsq_place_id"],
+                    "name": a["name"],
+                    "category": a["categories"][0]["name"],
+                    "latitude": a["latitude"],
+                    "longitude": a["longitude"]
+                }
+                for a in day_activities
+            ]
+        })
+
+    return itinerary
+
+
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+router = APIRouter(prefix="/itinerary", tags=["Auto Itinerary"])
+
+class AutoPlanRequest(BaseModel):
+    city: str
+    start_date: str
+    end_date: str
+
+@router.post("/auto-plan")
+def auto_plan_trip(payload: AutoPlanRequest):
+    itinerary = generate_day_wise_itinerary(
+        payload.city,
+        payload.start_date,
+        payload.end_date
+    )
+
+    return {
+        "city": payload.city,
+        "total_days": len(itinerary),
+        "itinerary": itinerary
+    }
+
+from fastapi import APIRouter, Depends
+from app.core.database import get_db
+from app.schemas.activity import ScheduleActivityCreate
+
+router = APIRouter(prefix="/schedule", tags=["Schedule"])
+
+@router.post("/activities")
+def save_activity(
+    payload: ScheduleActivityCreate,
+    db = Depends(get_db)
+):
+    res = db.table("scheduled_activities").insert(payload.dict()).execute()
+
+    return {
+        "message": "Activity scheduled successfully",
+        "data": res.data
+    }
+
+
+
+@router.get("/trips/{trip_id}")
+def get_scheduled_activities(trip_id: str, db=Depends(get_db)):
+    res = (
+        db.table("scheduled_activities")
+        .select("*")
+        .eq("trip_id", trip_id)
+        .order("day")
+        .execute()
+    )
+
+    return res.data
+
+
+from app.schemas.activity import ScheduleActivityUpdate
+
+@router.patch("/activities/{activity_id}")
+def update_activity(
+    activity_id: str,
+    payload: ScheduleActivityUpdate,
+    db=Depends(get_db)
+):
+    res = (
+        db.table("scheduled_activities")
+        .update(payload.dict(exclude_unset=True))
+        .eq("id", activity_id)
+        .execute()
+    )
+
+    return {
+        "message": "Activity updated successfully",
+        "data": res.data
+    }
+
+
+
+@router.delete("/activities/{activity_id}")
+def delete_activity(activity_id: str, db=Depends(get_db)):
+    db.table("scheduled_activities").delete().eq("id", activity_id).execute()
+    return {"message": "Activity removed"}

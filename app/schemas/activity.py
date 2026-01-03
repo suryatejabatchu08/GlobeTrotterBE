@@ -51,3 +51,24 @@ class ActivityCreate(BaseModel):
     fsq_place_id: str
     name: str
     category: str
+
+from pydantic import BaseModel
+from typing import Optional
+
+class ScheduleActivityCreate(BaseModel):
+    trip_id: str
+    city: str
+    day: int
+    fsq_place_id: str
+    name: str
+    category: Optional[str] = None
+    estimated_cost: Optional[int] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+
+
+class ScheduleActivityUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    estimated_cost: Optional[int] = None
+    day: Optional[int] = None
