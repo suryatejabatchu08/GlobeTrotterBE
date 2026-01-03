@@ -26,15 +26,15 @@ class Settings(BaseSettings):
         "http://localhost:8000",
     ]
     
+    # External APIs
+    GEONAMES_USERNAME: str = "aadarshsenapati"
+    FSQ_SERVICE_KEY: str = "YYJC2TYHXJTVSF5SPC3HOUGJMTLRHHDSEPHIGDTLVCFJREZZ"
+    FSQ_API_VERSION: str = "2025-06-17"
+    FSQ_BASE_URL: str = "https://places-api.foursquare.com"
+    
     class Config:
         env_file = ".env"
         case_sensitive = True
 
 
 settings = Settings()
-
-
-GEONAMES_USERNAME = "aadarshsenapati"
-FSQ_SERVICE_KEY = "YYJC2TYHXJTVSF5SPC3HOUGJMTLRHHDSEPHIGDTLVCFJREZZ"
-FSQ_API_VERSION = "2025-06-17"
-FSQ_BASE_URL = "https://places-api.foursquare.com"
