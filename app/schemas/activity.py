@@ -44,3 +44,10 @@ class ActivityResponse(ActivityBase):
     
     class Config:
         from_attributes = True
+
+from pydantic import BaseModel
+
+class ActivityCreate(BaseModel):
+    fsq_place_id: str
+    name: str
+    category: str

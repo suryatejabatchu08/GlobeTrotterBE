@@ -1,3 +1,4 @@
+import pydantic_settings
 from pydantic_settings import BaseSettings
 from typing import List
 import os
@@ -31,3 +32,9 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+GEONAMES_USERNAME = "aadarshsenapati"
+FSQ_SERVICE_KEY = "YYJC2TYHXJTVSF5SPC3HOUGJMTLRHHDSEPHIGDTLVCFJREZZ"
+FSQ_API_VERSION = "2025-06-17"
+FSQ_BASE_URL = "https://places-api.foursquare.com"

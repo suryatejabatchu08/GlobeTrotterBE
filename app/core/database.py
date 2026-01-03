@@ -12,6 +12,10 @@ def get_supabase() -> Client:
     """Dependency for getting Supabase client"""
     return supabase
 
+def get_db() -> Client:
+    """Dependency for getting Supabase client"""
+    return supabase
+
 
 def get_supabase_admin() -> Client:
     """Dependency for getting Supabase admin client"""

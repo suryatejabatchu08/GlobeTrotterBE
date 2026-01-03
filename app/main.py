@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.routes import auth, trips, profile, budget, search
+from app.routes import auth, trips, profile, budget, search, itinerary
 import logging
 
 # Configure logging
@@ -35,6 +35,7 @@ app.include_router(trips.router, prefix=f"{settings.API_V1_PREFIX}")
 app.include_router(profile.router, prefix=f"{settings.API_V1_PREFIX}")
 app.include_router(budget.router, prefix=f"{settings.API_V1_PREFIX}")
 app.include_router(search.router, prefix=f"{settings.API_V1_PREFIX}")
+app.include_router(itinerary.router, prefix=f"{settings.API_V1_PREFIX}")
 
 
 @app.get("/")
